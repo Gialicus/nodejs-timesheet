@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 import * as dotenv from 'dotenv'
 import { checkAuth } from '../services/check-auth'
-import { TimesheetService } from '../services/TimesheetService';
+import TimesheetService from '../services/TimesheetService';
 
 
 class baseController {
@@ -24,6 +24,11 @@ class baseController {
     }
 //Register new User no Permission needed
     add = async (req: Request, res: Response) => {
+        const listOfDay = [...req.body.list]
+        const validatingList = []
+        listOfDay.forEach( day => {
+            TimesheetService.processTimesheet(day)
+        })
     }
 //Delete User by Id need Permission
     delete = async (req: Request, res: Response) => {

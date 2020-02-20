@@ -3,7 +3,7 @@ import Joi from 'joi';
 import Timesheet from '../models/Timesheet';
 
 
-export class TimesheetService {
+export default class TimesheetService {
     constructor() { 
     }
     
@@ -21,6 +21,7 @@ export class TimesheetService {
             pmStart: item.pmStart,
             pmEnd: item.pmEnd
         })
-        return validTimesheet
+        await Timesheet.create(timesheet)
+        return timesheet
     }
 }
