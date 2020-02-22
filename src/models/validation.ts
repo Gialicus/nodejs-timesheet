@@ -1,13 +1,13 @@
 import Joi from 'joi'
 const validationSchema = {
     id: Joi.number().required(),
-    dayname: Joi.number().required(),
+    dayName: Joi.number().required(),
     date: Joi.date().required(),
     isHolyDay: Joi.boolean().required(),
-    amStart: Joi.string().required(),
-    amEnd: Joi.string().required(),
-    pmStart: Joi.string().required(),
-    pmEnd: Joi.string().required()
+    amStart: Joi.string().length(5).required(),
+    amEnd: Joi.string().length(5).required(),
+    pmStart: Joi.string().length(5).required(),
+    pmEnd: Joi.string().length(5).required()
 }
 export default validationSchema
 // id: i,

@@ -15,16 +15,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const dotenv = __importStar(require("dotenv"));
 const check_auth_1 = require("../services/check-auth");
-const TimesheetService_1 = require("../services/TimesheetService");
+const TimesheetService_1 = __importDefault(require("../services/TimesheetService"));
 class baseController {
     constructor() {
         this.baseURL = process.env.BASE_URL || '/api/timesheet';
         this.secretKey = process.env.SECRET_KEY || 'secretKey';
-        this.timesheetService = new TimesheetService_1.TimesheetService();
+        this.timesheetService = new TimesheetService_1.default();
         //get all User need Permission
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
         });
@@ -33,6 +36,15 @@ class baseController {
         });
         //Register new User no Permission needed
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const listOfDay = [...req.body];
+            let validatingList = this.timesheetService.createValidItems(listOfDay);
+            const objDTO = {
+                user_id: '100TEST',
+                user_email: 'giali@email.com',
+                timesheet: [...validatingList]
+            };
+            yield this.timesheetService.saveAggregate(objDTO);
+            return res.status(200).json(objDTO);
         });
         //Delete User by Id need Permission
         this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {

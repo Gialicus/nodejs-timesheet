@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const joi_1 = __importDefault(require("joi"));
 const validationSchema = {
     id: joi_1.default.number().required(),
-    dayname: joi_1.default.number().required(),
+    dayName: joi_1.default.number().required(),
     date: joi_1.default.date().required(),
     isHolyDay: joi_1.default.boolean().required(),
-    amStart: joi_1.default.string().required(),
-    amEnd: joi_1.default.string().required(),
-    pmStart: joi_1.default.string().required(),
-    pmEnd: joi_1.default.string().required()
+    amStart: joi_1.default.string().length(5).required(),
+    amEnd: joi_1.default.string().length(5).required(),
+    pmStart: joi_1.default.string().length(5).required(),
+    pmEnd: joi_1.default.string().length(5).required()
 };
 exports.default = validationSchema;
 // id: i,
