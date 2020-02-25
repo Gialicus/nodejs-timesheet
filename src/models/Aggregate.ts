@@ -4,37 +4,56 @@ const AggregateSchema = new Schema({
         type: String,
         required: true
     },
-    user_email: {
+    token: {
         type: String,
         required: true
     },
-    timesheet: [
-        {
-            "id": {
-                type: Number
-            },
-            "dayName": {
-                type: Number
-            },
-            "date": {
-                type: Date
-            },
-            "isHolyDay": {
-                type: Boolean
-            },
-            "amStart": {
-                type: String,
-            },
-            "amEnd": {
-                type: String,
-            },
-            "pmStart": {
-                type: String,
-            },
-            "pmEnd": {
-                type: String,
+    email: {
+        type: String,
+        required: true
+    },
+    timesheet: {
+        total: {
+            type: Number
+        },
+        totalExtra: {
+            type: Number
+        },
+        dailyTotals: {
+            type: Array
+        },
+        dailyExtras: {
+            type: Array
+        },
+        report: [
+            {
+                "id": {
+                    type: Number
+                },
+                "dayName": {
+                    type: Number
+                },
+                "date": {
+                    type: Date
+                },
+                "isHolyDay": {
+                    type: Boolean
+                },
+                "amStart": {
+                    type: String
+                },
+                "amEnd": {
+                    type: String
+                },
+                "pmStart": {
+                    type: String
+                },
+                "pmEnd": {
+                    type: String
+                }
             }
-        }
-    ]
+        ]
+    }
+
 });
-export default model('aggregate-ts', AggregateSchema)
+export default model('time_report', AggregateSchema)

@@ -26,3 +26,16 @@ function checkAuth(req, res, next) {
     next();
 }
 exports.checkAuth = checkAuth;
+function checkForLoad(req, res, next) {
+    try {
+        const decoded = jsonwebtoken_1.default.verify(req.query.token, process.env.SECRET_KEY || 'secretKey');
+        req.userData = decoded;
+    }
+    catch (error) {
+        return res.status(401).json({
+            message: 'AuthFailed'
+        });
+    }
+    next();
+}
+exports.checkForLoad = checkForLoad;

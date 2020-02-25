@@ -1,58 +1,66 @@
 import { Request, Response, Router } from 'express'
 import * as dotenv from 'dotenv'
-import { checkAuth } from '../services/check-auth'
-import TimesheetService from '../services/TimesheetService';
+import { checkAuth, checkForLoad } from '../services/check-auth'
+import Service from '../services/Service';
 
 
 class baseController {
     router: Router;
     baseURL = process.env.BASE_URL || '/api/timesheet';
     secretKey= process.env.SECRET_KEY || 'secretKey';
-    timesheetService = new TimesheetService();
+    service = new Service();
 
     constructor() {
         this.router = Router();
         this.routes();
     }
-//get all User need Permission
+
     getAll = async (req: any,res: any) => {
-
+        const vo = await this.service.getAll()
+        return res.status(200).json(vo)
     }
-//get One User by Id need Permission
-    get = async (req: Request, res: Response) => {
 
+    getAllbyEmail = async (req: Request, res: Response) => {
+        const email = req.query.email
+        console.log(email)
+        const vo = await this.service.getDTObyUser(email)
+        return res.status(200).json(vo)
     }
-//Register new User no Permission needed
+
     add = async (req: any, res: any) => {
-        const listOfDay = [...req.body]
-        let validatingList: any[] = this.timesheetService.createValidItems(listOfDay)
+        const listOfDay = [...req.body.timesheet]
+        const id = req.body.user_id
+        const email = req.body.email
+        const token = req.body.token
+        let validatingList = this.service.createValidItems(listOfDay)
         const objDTO = {
-            user_id: '100TEST',
-            user_email: 'giali@email.com',
-            timesheet: [...validatingList]
+            user_id: id,
+            token: token,
+            email: email,
+            timesheet: {...validatingList}
         }
-        await this.timesheetService.saveAggregate(objDTO)
+        await this.service.saveDTO(objDTO)
         return res.status(200).json(objDTO)
     }
-//Delete User by Id need Permission
+
     delete = async (req: Request, res: Response) => {
     }
-//Update User by Email need a Special Permission only for self
+
     update = async (req: Request, res: Response) => {
 
     }
-//Routes for User Controller
+
     routes() {
-        //get all users
+
         this.router.get(this.baseURL, checkAuth, this.getAll);
-        //get user by id
-        this.router.get(this.baseURL + '/:id', checkAuth, this.get);
-        //delete user
+
+        this.router.get(this.baseURL + '/report', checkForLoad, this.getAllbyEmail);
+
         this.router.delete(this.baseURL + '/:id', checkAuth, this.delete);
-        //update user
+
         this.router.put(this.baseURL, checkAuth, this.update);
-        //register new user
-        this.router.post(this.baseURL, this.add);
+
+        this.router.post(this.baseURL, checkAuth, this.add);
     }
 
 }

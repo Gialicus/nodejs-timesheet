@@ -22,51 +22,50 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const dotenv = __importStar(require("dotenv"));
 const check_auth_1 = require("../services/check-auth");
-const TimesheetService_1 = __importDefault(require("../services/TimesheetService"));
+const Service_1 = __importDefault(require("../services/Service"));
 class baseController {
     constructor() {
         this.baseURL = process.env.BASE_URL || '/api/timesheet';
         this.secretKey = process.env.SECRET_KEY || 'secretKey';
-        this.timesheetService = new TimesheetService_1.default();
-        //get all User need Permission
+        this.service = new Service_1.default();
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const vo = yield this.service.getAll();
+            return res.status(200).json(vo);
         });
-        //get One User by Id need Permission
-        this.get = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllbyEmail = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const email = req.query.email;
+            console.log(email);
+            const vo = yield this.service.getDTObyUser(email);
+            return res.status(200).json(vo);
         });
-        //Register new User no Permission needed
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const listOfDay = [...req.body];
-            let validatingList = this.timesheetService.createValidItems(listOfDay);
+            const listOfDay = [...req.body.timesheet];
+            const id = req.body.user_id;
+            const email = req.body.email;
+            const token = req.body.token;
+            let validatingList = this.service.createValidItems(listOfDay);
             const objDTO = {
-                user_id: '100TEST',
-                user_email: 'giali@email.com',
-                timesheet: [...validatingList]
+                user_id: id,
+                token: token,
+                email: email,
+                timesheet: Object.assign({}, validatingList)
             };
-            yield this.timesheetService.saveAggregate(objDTO);
+            yield this.service.saveDTO(objDTO);
             return res.status(200).json(objDTO);
         });
-        //Delete User by Id need Permission
         this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
         });
-        //Update User by Email need a Special Permission only for self
         this.update = (req, res) => __awaiter(this, void 0, void 0, function* () {
         });
         this.router = express_1.Router();
         this.routes();
     }
-    //Routes for User Controller
     routes() {
-        //get all users
         this.router.get(this.baseURL, check_auth_1.checkAuth, this.getAll);
-        //get user by id
-        this.router.get(this.baseURL + '/:id', check_auth_1.checkAuth, this.get);
-        //delete user
+        this.router.get(this.baseURL + '/report', check_auth_1.checkForLoad, this.getAllbyEmail);
         this.router.delete(this.baseURL + '/:id', check_auth_1.checkAuth, this.delete);
-        //update user
         this.router.put(this.baseURL, check_auth_1.checkAuth, this.update);
-        //register new user
-        this.router.post(this.baseURL, this.add);
+        this.router.post(this.baseURL, check_auth_1.checkAuth, this.add);
     }
 }
 dotenv.config();
