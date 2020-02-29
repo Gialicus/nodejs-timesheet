@@ -40,14 +40,11 @@ class baseController {
         });
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const listOfDay = [...req.body.timesheet];
-            const id = req.body.user_id;
-            const email = req.body.email;
-            const token = req.body.token;
             let validatingList = this.service.createValidItems(listOfDay);
             const objDTO = {
-                user_id: id,
-                token: token,
-                email: email,
+                user_id: req.body.user_id,
+                token: req.body.token,
+                email: req.body.email,
                 timesheet: Object.assign({}, validatingList)
             };
             yield this.service.saveDTO(objDTO);

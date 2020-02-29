@@ -29,14 +29,11 @@ class baseController {
 
     add = async (req: any, res: any) => {
         const listOfDay = [...req.body.timesheet]
-        const id = req.body.user_id
-        const email = req.body.email
-        const token = req.body.token
         let validatingList = this.service.createValidItems(listOfDay)
         const objDTO = {
-            user_id: id,
-            token: token,
-            email: email,
+            user_id: req.body.user_id,
+            token: req.body.token,
+            email: req.body.email,
             timesheet: {...validatingList}
         }
         await this.service.saveDTO(objDTO)
